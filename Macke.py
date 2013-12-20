@@ -10,6 +10,7 @@ from readme import * #license, credit, and other information - script is free/op
 import Live # Script that instantiates artificial intelligence and mind reading capability
 import time # Required for error logging
 # what we need from _Framework o a general sense
+from _Framework.EncoderElement import EncoderElement #Send knobs
 from _Framework.ButtonElement import ButtonElement # button elemtns
 from _Framework.ButtonMatrixElement import ButtonMatrixElement # martix/grd/box
 from _Framework.ClipSlotComponent import ClipSlotComponent  #hold buttons
@@ -220,19 +221,16 @@ class Macke(ControlSurface):
                 strip = self.mixer.channel_strip(index)
                 strip.set_volume_control(self.slider(midi_channel, self.track_volume[index]))
 
-#		// Track properties
-		strip.set_arm_button(ButtonElement(True, MIDI_NOTE_TYPE, midi_channel, arm_button[index]))
-		strip.set_mute_button(ButtonElement(True, MIDI_NOTE_TYPE, midi_channel, mute_button[index]))
-		strip.set_solo_button(ButtonElement(True, MIDI_NOTE_TYPE, midi_channel, solo_button[index]))	
+#        // Track properties
+                strip.set_arm_button(ButtonElement(True, MIDI_NOTE_TYPE, midi_channel, arm_button[index]))
+                strip.set_mute_button(ButtonElement(True, MIDI_NOTE_TYPE, midi_channel, mute_button[index]))
+                strip.set_solo_button(ButtonElement(True, MIDI_NOTE_TYPE, midi_channel, solo_button[index]))
+                #Two sends per channel strip
+		strip.set_send_controls((EncoderElement(MIDI_CC_TYPE,midi_channel,send_a[index],Live.MidiMap.MapMode.relative_two_compliment),EncoderElement(MIDI_CC_TYPE,midi_channel,send_b[index],Live.MidiMap.MapMode.relative_two_compliment)))  
 
-#		// Sends
-
-#            for i in range(12):
-#                self.mixer.send_controls.append(None)
-#            self.mixer.send_controls[self.mixer.sends_index] = EncoderElement(MIDI_CC_TYPE, CHANNEL, mixer_sendknob_cc[index], Live.MidiMap.MapMode.absolute)
-#            strip.set_send_controls(tuple(self.mixer.send_controls))
-#            strip._invert_mute_feedback = True
-#        self.mixer._update_send_index(self.mixer.sends_index)	              
+#                 strip.set_send_controls(self.slider(midi_channel,self.send_a[index]))    
+#                 strip.set_send_controls(self.slider(midi_channel,self.send_b[index]))
+                 
                
         else: # bad math, error messAge, fail
             self.log_message(time.strftime("%d.%m.%Y %H:%M:%S", time.localtime()) + "..::|| volume param bad math message. box_width != len(track_volume) ||::..")
